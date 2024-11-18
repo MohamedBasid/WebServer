@@ -12,7 +12,7 @@ import java.util.List;
 public class Server {
 
     private static void handleRequest(Socket socket) throws IOException {
-        String response = "HTTP/1.1 404 Not Found\r\n\r\n";
+        List<String> responses = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         List<String> request = new ArrayList<>();
         while(true) {
@@ -25,12 +25,24 @@ public class Server {
         }
         if(request.get(0).contains("GET")) {
             String[] firstLine = request.get(0).split(" ");
-            if (firstLine[1].equals("/")) {
-                response = "HTTP/1.1 200 OK\r\n\r\n";
+            String toBePrinted = "";
+            if (firstLine[1].equals("/") || firstLine[1].contains("/echo")) {
+                responses.add("HTTP/1.1 200 OK\r\n\r\n");
+                int startindex = firstLine[1].lastIndexOf("/echo/");
+                toBePrinted = firstLine[1].substring(startindex + 6);
             }
+            else {
+                responses.add("HTTP/1.1 404 Not Found\r\n\r\n");
+            }
+            responses.add("Content-Type: text/plain");
+            responses.add("Content-Length: " + toBePrinted.length());
+            responses.add("");
+            responses.add(toBePrinted);
         }
         PrintWriter writer = new PrintWriter(socket.getOutputStream());
-        writer.print(response);
+        for(String response : responses) {
+            writer.print(response + "\r\n");
+        }
         writer.flush();
         reader.close();
         writer.close();
