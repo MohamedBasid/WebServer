@@ -1,4 +1,4 @@
-package MultiThreaded;
+package multithreaded;
 
 import java.io.IOException;
 import java.io.PrintWriter;

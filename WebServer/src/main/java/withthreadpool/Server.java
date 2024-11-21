@@ -1,4 +1,4 @@
-package WithThreadPool;
+package withthreadpool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,12 +22,13 @@ public class Server {
     }
 
     public static void main(String[] args) throws IOException {
-        int port = 8080;
+        int port = 9091;
         ServerSocket serverSocket = new ServerSocket(port);
         Server server = new Server(10);
         System.out.println("Server listening to port: " + port);
         while(true) {
             Socket clientConnection = serverSocket.accept();
+            System.out.println("Connection accepted from the client: " + clientConnection.toString());
             server.threadPool.execute(() -> {
                 try {
                     server.handleClient(clientConnection);
